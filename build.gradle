@@ -1,22 +1,64 @@
-group 'org.hibernate'
-version '1.0-SNAPSHOT'
+allprojects {
+    group 'org.hibernate'
+    version '1.0-SNAPSHOT'
 
-apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: 'maven-publish'
+    apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
 
-repositories {
-    mavenCentral()
+    repositories {
+        mavenCentral()
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M3'
+    }
+}
+
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 dependencies {
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.0-M3'
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M3")
+
     testCompile group: 'org.easytesting', name: 'fest-assert', version: '1.4'
     testCompile group: 'org.hibernate', name: 'hibernate-hikaricp', version: '5.0.11.Final'
+    testCompile project(':hibernate-utils')
 
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.0.11.Final'
     compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.0.11.Final'
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.5'
+}
+
+junitPlatform {
+    // platformVersion '1.0.0-M3'
+    filters {
+        engines {
+            // include 'junit-jupiter', 'junit-vintage'
+            // exclude 'custom-engine'
+        }
+        tags {
+            // include 'fast'
+            exclude 'slow'
+        }
+        // includeClassNamePattern '.*Test'
+    }
+    // enableStandardTestTask true
+    // reportsDir file('build/test-results/junit-platform') // this is the default
+    logManager 'org.apache.logging.log4j.jul.LogManager'
 }

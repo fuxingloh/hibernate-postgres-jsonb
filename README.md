@@ -129,4 +129,5 @@ class TestExample{
 }
 ```
 
-See https://github.com/pires/hibernate-postgres-jsonb for more
+References:
+https://github.com/pires/hibernate-postgres-jsonb

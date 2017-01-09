@@ -1,6 +1,8 @@
 ## Hibernate Postgres JSONB
 
-A working implementation of JSON with Hibernate and Jackson ObjectNode.
+A working implementation of JSONB with Hibernate and Jackson ObjectNode.
+<br />
+The library address the problem of using Hibernate with Postgres JSONB 
 
 Using Postgres JSONB in HibernateJPA
 - Hibernate + JPA
@@ -23,7 +25,6 @@ Setup Entity Class
 @TypeDef(name = "jsonb", typeClass = JsonUserType.class)
 @Entity
 public class JsonEntity {
-    
     @Type(type = "jsonb")
     private ObjectNode json;
 }
@@ -42,7 +43,6 @@ gradlew test
 @TypeDef(name = "jsonb", typeClass = JsonUserType.class)
 @Entity
 public class JsonEntity {
-
     private String id;
     private String name; // normal field
     private ObjectNode json; // jsonb
@@ -80,7 +80,8 @@ public class JsonEntity {
 }
 ```
 
-##### Usage example
+##### Usage example with JsonEntity
+Look at JsonEntityTest for more info
 ```java
 class TestExample{
     static ObjectMapper mapper = new ObjectMapper();
@@ -103,19 +104,9 @@ class TestExample{
         entityManager.persist(entity);
         final String id = entity.getId();
 
-        // Query and assert test
+        // Query and get object node back
         JsonEntity queryEntity = entityManager.find(JsonEntity.class, id);
-        assertEquals(queryEntity.getId(), id);
-        assertEquals(queryEntity.getJson().path("parser").asText(), "jackson");
-
-        // Update Entity
-        JsonEntity updateEntity = entityManager.find(JsonEntity.class, id);
-        updateEntity.getJson().put("name", "Fuxing");
-        entityManager.persist(updateEntity);
-
-        // Query and assert updated entity
-        queryEntity = entityManager.find(JsonEntity.class, id);
-        assertEquals(queryEntity .getJson().path("name").asText(), "Fuxing");
+        ObjectNode queryNode = queryEntity.getJson();
     }
     
     /**
@@ -125,15 +116,13 @@ class TestExample{
     void persistObject() throws Exception {
         MyCustomObject object = new MyCustomObject();
         
+        // Persist entity
         JsonEntity entity = new JsonEntity();
         entity.setJson(mapper.valueToTree(object));
-        
-        // Persist
         entityManager.persist(entity);
         
-        // Query
+        // Query entity
         JsonEntity queryEntity = entityManager.find(JsonEntity.class, entity.getId());
-        
         MyCustomObject queryObject = mapper.treeToValue(queryEntity.getJson(), MyCustomObject.class);
         assertEquals(queryObject, object);
     }

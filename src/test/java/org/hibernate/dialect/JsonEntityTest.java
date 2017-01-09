@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Time: 4:28 PM
  * Project: hibernate-postgres-jsonb
  */
-class JsonPostgreSQLDialectTest {
+class JsonEntityTest {
 
     static ObjectMapper mapper = new ObjectMapper();
     static TransactionProvider provider;

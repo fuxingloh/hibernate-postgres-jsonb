@@ -1,2 +1,3 @@
 rootProject.name = 'hibernate-postgres-jsonb'
+include 'hibernate-utils'
 
